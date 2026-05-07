@@ -1,0 +1,51 @@
+# Builds + publishes a signed release on every git tag matching v*.
+#
+# Setup (one-time):
+#   1. Generate a GPG key:  gpg --full-generate-key
+#   2. Export the public key and add it on registry.terraform.io
+#      under your publisher account.
+#   3. Add repository secrets:
+#         GPG_PRIVATE_KEY  — `gpg --armor --export-secret-keys <key-id>` then base64
+#         PASSPHRASE       — passphrase for the key
+#   4. Push a tag:           git tag v0.1.0 && git push origin v0.1.0
+#
+# The Terraform Registry polls tags and ingests new versions
+# automatically once the publisher is verified.
+
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          version: latest
+          args: release --clean
+        env:
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
