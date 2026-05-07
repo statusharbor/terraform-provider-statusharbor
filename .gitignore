@@ -1,0 +1,26 @@
+# Binary
+terraform-provider-statusharbor
+
+# Build artifacts
+dist/
+bin/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Acceptance-test scratch
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Local override files
+*.tfvars
+!examples/**/*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
