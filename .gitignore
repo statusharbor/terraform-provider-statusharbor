@@ -17,6 +17,11 @@ bin/
 .terraform/
 .terraform.lock.hcl
 
+# Locally-generated GPG key + passphrase. NEVER commit. The
+# `gh secret set` invocation pushes these into GitHub repo secrets;
+# the local copies stay on this machine for emergency recovery.
+.secrets/
+
 # Local override files
 *.tfvars
 !examples/**/*.tfvars
