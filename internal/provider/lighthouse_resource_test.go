@@ -31,7 +31,7 @@ var providerFactories = map[string]func() (tfprotov6.ProviderServer, error){
 func testAccPreCheck(t *testing.T) {
 	t.Helper()
 	if os.Getenv("STATUSHARBOR_API_TOKEN") == "" {
-		t.Fatal("STATUSHARBOR_API_TOKEN must be set for acceptance tests")
+		t.Skip("STATUSHARBOR_API_TOKEN not set; skipping real-Console acceptance test")
 	}
 }
 
