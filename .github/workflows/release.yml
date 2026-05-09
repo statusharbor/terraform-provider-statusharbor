@@ -49,3 +49,33 @@ jobs:
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Telegram notification on success
+        if: ${{ success() }}
+        uses: appleboy/telegram-action@v0.1.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ✅ Release Published - terraform-provider-statusharbor
+
+            Repository: ${{ github.repository }}
+            Tag: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+
+            View: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+
+      - name: Send Telegram notification on failure
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@v0.1.1
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ❌ Release Failed - terraform-provider-statusharbor
+
+            Repository: ${{ github.repository }}
+            Tag: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+
+            View: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
